@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import { defaultCurrencyCode } from '../constants/currency';
+import {
+  defaultCurrencyCode,
+  roundCurrencyFixedNum,
+} from '../constants/currency';
 import {
   ICurrency,
   HandleInputRecalculation,
   GetSelectorChangeHandler,
   GetInputChangeHandler,
 } from '../types/currency';
-import { getCurrencyByCode } from '../utils/currency';
+import { getCurrencyByCode, roundToFixed } from '../utils/currency';
 import useCurrencyApi from './useCurrencyApi';
 
 const useHome = () => {
@@ -38,17 +41,20 @@ const useHome = () => {
       setSecondSelectedCurrency(newSecondSelectedCurrency);
 
       if (newFirstSelectedCurrency.code === newSecondSelectedCurrency.code) {
-        setSecondInputValue(
+        const value = roundToFixed(
           firstInputValue * newSecondSelectedCurrency.exchangeRate
         );
+        setSecondInputValue(value);
       } else if (exchangeCurrencyCode === newFirstSelectedCurrency.code) {
-        setSecondInputValue(
+        const value = roundToFixed(
           firstInputValue * newSecondSelectedCurrency.exchangeRate
         );
+        setSecondInputValue(value);
       } else if (exchangeCurrencyCode === newSecondSelectedCurrency.code) {
-        setFirstInputValue(
+        const value = roundToFixed(
           secondInputValue * newFirstSelectedCurrency.exchangeRate
         );
+        setFirstInputValue(value);
       }
     }
   }, [currencies]);
@@ -66,7 +72,7 @@ const useHome = () => {
       exchangeRate,
       otherSelectedCurrency.exchangeRate
     );
-    setOtherInputValue(newValue);
+    setOtherInputValue(roundToFixed(newValue));
   };
 
   const getSelectorChangeHandler: GetSelectorChangeHandler =
